@@ -9,5 +9,6 @@ package com.network.lm.common.configuration
 object Constants {
     //网络事件标记
     const val NET_WORK_CONNECTION_STATUS_AND_NET_TYPE_CODE : Int = 0x1040
-
+    //21版本一下网络回调标记
+    const val NET_WORK_IS_CONNECTION: String = "NET_WORK_IS_CONNECTION"
 }

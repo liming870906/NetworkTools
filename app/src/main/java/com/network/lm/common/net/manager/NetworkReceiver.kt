@@ -9,6 +9,7 @@ import android.net.ConnectivityManager
 import android.os.Bundle
 import com.network.lm.common.eventbus.NetWorkEvent
 import com.network.lm.common.configuration.Constants.NET_WORK_CONNECTION_STATUS_AND_NET_TYPE_CODE
+import com.network.lm.common.configuration.Constants.NET_WORK_IS_CONNECTION
 import com.network.lm.common.eventbus.ConcreteFactory
 import org.greenrobot.eventbus.EventBus
 
@@ -28,7 +29,7 @@ class NetworkReceiver : BroadcastReceiver() {
                 val netType = getNetType(manager)
                 val isAvailable = netType != NetType.NONE
                 val bundle = Bundle()
-                bundle.putBoolean("NET_WORK_IS_CONNECTION",isAvailable)
+                bundle.putBoolean(NET_WORK_IS_CONNECTION,isAvailable)
                 val event = ConcreteFactory().createEvent(NetWorkEvent::class.java)
                 event.what = NET_WORK_CONNECTION_STATUS_AND_NET_TYPE_CODE
                 event.obj = netType

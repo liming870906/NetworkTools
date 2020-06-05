@@ -16,8 +16,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         //初始网络状态及类型
-        setTVContentViewValue(NetworkManager.INSTANCE.connection)
-        setTVNetTypeValue(NetworkManager.INSTANCE.netType)
+        setTVContentViewValue(NetworkManager.INSTANCE.getConnectionState())
+        setTVNetTypeValue(NetworkManager.INSTANCE.getNetworkType())
     }
 
     val callback = object : BaseNetworkStatus() {

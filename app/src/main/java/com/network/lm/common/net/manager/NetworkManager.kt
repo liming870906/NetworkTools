@@ -7,11 +7,8 @@ import android.net.ConnectivityManager
 import android.net.NetworkRequest
 import android.os.Build
 import androidx.annotation.NonNull
-import com.network.lm.common.configuration.Constants.NET_WORK_CONNECTION_STATUS_AND_NET_TYPE_CODE
-import com.network.lm.common.eventbus.NetWorkEvent
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
 import java.lang.Exception
+import java.util.*
 
 /**
  * 网络监听
@@ -29,10 +26,20 @@ class NetworkManager private constructor() {
     private lateinit var networkCallbackImpl: NetworkCallbackImpl
 
     //回调接口
-    private val callbacks: MutableList<BaseNetworkStatus> = mutableListOf()
+    private val callbacks: Vector<BaseNetworkStatus> = Vector()
 
-    var connection: Boolean = false
-    var netType: NetType = NetType.NONE
+    private var connection: Boolean = false
+    private var netType: NetType = NetType.NONE
+
+    /**
+     * 获得网络连接状态
+     */
+    fun getConnectionState(): Boolean = connection
+
+    /**
+     * 获得网络连接类型
+     */
+    fun getNetworkType(): NetType = netType
 
     /**
      * 初始化方法
@@ -57,8 +64,6 @@ class NetworkManager private constructor() {
                 getNetType(manager)
             }
         } else {
-            if (!EventBus.getDefault().isRegistered(INSTANCE))
-                EventBus.getDefault().register(INSTANCE)
             //开启服务
             mContext.startService(Intent(mContext, NetworkService::class.java))
         }
@@ -76,8 +81,6 @@ class NetworkManager private constructor() {
         } else {
             //关闭服务
             mContext.stopService(Intent(mContext, NetworkService::class.java))
-            if (EventBus.getDefault().isRegistered(INSTANCE))
-                EventBus.getDefault().unregister(INSTANCE)
         }
         //清楚所有回调Callback
         clearAllNetWorkStatusCallback()
@@ -148,18 +151,15 @@ class NetworkManager private constructor() {
     }
 
     /**
-     * 接收网络状态事件
-     * @param event 网络状态事件对象
+     * 接收网络连接状态
+     * NetworkService回调方法
+     * @param isAvailable 网络连接状态
      */
-    @Subscribe
-    fun onEventMainThread(event: NetWorkEvent) {
-        if (event.what == NET_WORK_CONNECTION_STATUS_AND_NET_TYPE_CODE) {
-            val isAvailable = event.data.getBoolean("NET_WORK_IS_CONNECTION")
-            observerIsConnection(isAvailable)
-            if(isAvailable){
-                val netType = event.obj as NetType
-                observerNetWorkType(netType)
-            }
-        }
-    }
+    fun putIsConnection(isAvailable: Boolean) = observerIsConnection(isAvailable)
+
+    /**
+     * 接收网络类型
+     * @param type 网络类型
+     */
+    fun putNetworkType(type : NetType) = observerNetWorkType(type)
 }
